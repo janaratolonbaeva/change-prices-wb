@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Prices</title>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+  </head>
+  <body>
+    <h1>New Prices</h1>
+    <div style="display: flex; justify-content: center; align-items: center">
+      <form id="form" style="display: flex; flex-direction: column; gap: 10px">
+        <div>
+          <select id="select">
+            <option value="+">+</option>
+            <option value="-">-</option>
+          </select>
+          <input type="number" id="number" />
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          <input type="file" id="fileInput" accept=".xlsx,.xls" />
+        </div>
+        <button type="button" id="calculateButton">Рассчитать</button>
+        <div id="output">
+          <button type="button" id="downloadButton">
+            Скачать файл с новыми ценами
+          </button>
+        </div>
+      </form>
+    </div>
+    <script src="new-prices.js"></script>
+  </body>
+</html>
