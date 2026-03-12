@@ -5,29 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>New Prices</title>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 100px;
+      }
+      @media (max-width: 768px) {
+        .container {
+          flex-direction: column;
+          gap: 50px;
+        }
+      }
+    </style>
   </head>
   <body>
-    <h1>New Prices</h1>
-    <div style="display: flex; justify-content: center; align-items: center">
-      <form id="form" style="display: flex; flex-direction: column; gap: 10px">
-        <div>
-          <select id="select">
-            <option value="+">+</option>
-            <option value="-">-</option>
-          </select>
-          <input type="number" id="number" />
-        </div>
-        <div style="display: flex; flex-direction: column; gap: 10px">
-          <input type="file" id="fileInput" accept=".xlsx,.xls" />
-        </div>
-        <button type="button" id="calculateButton">Рассчитать</button>
-        <div id="output">
-          <button type="button" id="downloadButton">
-            Скачать файл с новыми ценами
-          </button>
-        </div>
-      </form>
+    <div class="container">
+      <div style="display: flex; justify-content: center; align-items: center">
+        <form
+          id="form"
+          style="display: flex; flex-direction: column; gap: 10px"
+        >
+          <h2>Изменить цену товара</h2>
+          <div>
+            <select id="select">
+              <option value="+">+</option>
+              <option value="-">-</option>
+            </select>
+            <input type="number" id="number" />
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <input type="file" id="fileInput" accept=".xlsx,.xls" />
+          </div>
+          <button type="button" id="calculateButton">Рассчитать</button>
+          <div id="output">
+            <button type="button" id="downloadButton">
+              Скачать файл с новыми ценами
+            </button>
+          </div>
+        </form>
+      </div>
+      <div style="display: flex; justify-content: center; align-items: center">
+        <form
+          id="form2"
+          style="display: flex; flex-direction: column; gap: 10px"
+        >
+          <h2>Поменять количество товара</h2>
+          <div>
+            <select id="select2">
+              <option value="+">+</option>
+              <option value="-">-</option>
+            </select>
+            <input type="number" id="number2" />
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <input type="file" id="fileInput2" accept=".xlsx,.xls" />
+          </div>
+          <button type="button" id="calculateButton2">Рассчитать</button>
+          <div id="output">
+            <button type="button" id="downloadButton2">
+              Скачать файл с новым количеством товара
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
+
     <script src="new-prices.js"></script>
   </body>
 </html>

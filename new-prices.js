@@ -1,15 +1,18 @@
 const CURRENCY_PRICE_COL = "Текущая цена";
 const NEW_PRICE_COL = "Новая цена, RUB";
+const QUANTITY_COL = "Количество";
 
 let workbook = null;
 let processedWorkbook = null;
+let workbook2 = null;
+let processedWorkbook2 = null;
 
 // Загрузка и парсинг при выборе файла
-document.getElementById("fileInput").addEventListener("change", (e) => {
+document.getElementById("fileInput").addEventListener("change", e => {
   const file = e.target.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = (ev) => {
+  reader.onload = ev => {
     try {
       workbook = XLSX.read(ev.target.result, { type: "array" });
       processedWorkbook = null;
@@ -47,10 +50,10 @@ document.getElementById("calculateButton").addEventListener("click", () => {
 
   const headers = aoa[0];
   const currentPriceIdx = headers.findIndex(
-    (h) => h && String(h).trim() === CURRENCY_PRICE_COL
+    h => h && String(h).trim() === CURRENCY_PRICE_COL,
   );
   const newPriceIdx = headers.findIndex(
-    (h) => h && String(h).trim() === NEW_PRICE_COL
+    h => h && String(h).trim() === NEW_PRICE_COL,
   );
 
   if (currentPriceIdx === -1) {
@@ -115,6 +118,104 @@ document.getElementById("downloadButton").addEventListener("click", () => {
   const a = document.createElement("a");
   a.href = url;
   a.download = "prices_updated.xlsx";
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+// === Форма изменения количества ===
+document.getElementById("fileInput2").addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      workbook2 = XLSX.read(ev.target.result, { type: "array" });
+      processedWorkbook2 = null;
+      alert("Файл загружен. Введите число и нажмите Рассчитать.");
+    } catch (err) {
+      alert("Ошибка чтения файла: " + err.message);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+});
+
+document.getElementById("calculateButton2").addEventListener("click", () => {
+  if (!workbook2) {
+    alert("Сначала загрузите файл");
+    return;
+  }
+  const numberInput = document.getElementById("number2");
+  const value = parseInt(numberInput.value, 10);
+  if (isNaN(value)) {
+    alert("Введите число в поле");
+    return;
+  }
+  const operator = document.getElementById("select2").value;
+  const delta = operator === "+" ? value : -value;
+
+  const sheetName = workbook2.SheetNames[0];
+  const ws = workbook2.Sheets[sheetName];
+
+  const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true });
+  if (aoa.length === 0) {
+    alert("Таблица пуста");
+    return;
+  }
+
+  const headers = aoa[0];
+  const quantityIdx = headers.findIndex(
+    h => h && String(h).trim() === QUANTITY_COL,
+  );
+
+  if (quantityIdx === -1) {
+    alert(`Колонка "${QUANTITY_COL}" не найдена`);
+    return;
+  }
+
+  const encodeCell = XLSX.utils.encode_cell;
+
+  for (let r = 1; r < aoa.length; r++) {
+    const row = aoa[r];
+    const currentVal = row[quantityIdx];
+    let newQty;
+
+    if (currentVal == null || currentVal === "") {
+      newQty = "";
+    } else {
+      const num = parseInt(String(currentVal).replace(/\s/g, ""), 10);
+      if (isNaN(num)) {
+        newQty = currentVal;
+      } else if (num === 0) {
+        newQty = 0;
+      } else {
+        newQty = Math.max(0, num + delta);
+      }
+    }
+
+    const cellRef = encodeCell({ r, c: quantityIdx });
+    if (!ws[cellRef]) ws[cellRef] = {};
+    ws[cellRef].v = newQty;
+    ws[cellRef].t = typeof newQty === "number" ? "n" : "s";
+  }
+
+  processedWorkbook2 = workbook2;
+  alert("Расчёт выполнен. Нажмите кнопку для скачивания.");
+});
+
+document.getElementById("downloadButton2").addEventListener("click", () => {
+  const wb = processedWorkbook2 || workbook2;
+  if (!wb) {
+    alert("Сначала загрузите файл и выполните расчёт");
+    return;
+  }
+  const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+  const blob = new Blob([wbout], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "quantity_updated.xlsx";
   a.click();
   URL.revokeObjectURL(url);
 });
