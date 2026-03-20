@@ -1,79 +1,191 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>New Prices</title>
+    <meta
+      name="description"
+      content="Редактор цен и количества товаров в Excel"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="57x57"
+      href="/favicon/apple-icon-57x57.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="60x60"
+      href="/favicon/apple-icon-60x60.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="72x72"
+      href="/favicon/apple-icon-72x72.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="76x76"
+      href="/favicon/apple-icon-76x76.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="114x114"
+      href="/favicon/apple-icon-114x114.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="120x120"
+      href="/favicon/apple-icon-120x120.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="144x144"
+      href="/favicon/apple-icon-144x144.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="152x152"
+      href="/favicon/apple-icon-152x152.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/favicon/apple-icon-180x180.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="/favicon/android-icon-192x192.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="/favicon/favicon-96x96.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/favicon/favicon-16x16.png"
+    />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="msapplication-TileColor" content="#ffffff" />
+    <meta
+      name="msapplication-TileImage"
+      content="/favicon/ms-icon-144x144.png"
+    />
+    <meta name="theme-color" content="#ffffff" />
+    <title>Редактор цен и количества</title>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-      }
-      .container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 100px;
-      }
-      @media (max-width: 768px) {
-        .container {
-          flex-direction: column;
-          gap: 50px;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="container">
-      <div style="display: flex; justify-content: center; align-items: center">
-        <form
-          id="form"
-          style="display: flex; flex-direction: column; gap: 10px"
-        >
-          <h2>Изменить цену товара</h2>
-          <div>
-            <select id="select">
-              <option value="+">+</option>
-              <option value="-">-</option>
+    <header class="header">
+      <h1 class="header__title">Редактор Excel</h1>
+      <p class="header__subtitle">Обновление цен и количества товаров</p>
+    </header>
+
+    <main class="container">
+      <section class="card">
+        <h2 class="card__title">Изменить цену товара</h2>
+        <form id="form" class="form">
+          <div class="form__row">
+            <select id="select" class="select">
+              <option value="+">+ Прибавить</option>
+              <option value="-">− Отнять</option>
             </select>
-            <input type="number" id="number" />
+            <input
+              type="number"
+              id="number"
+              class="input"
+              placeholder="Число"
+              step="1"
+              min="0"
+            />
           </div>
-          <div style="display: flex; flex-direction: column; gap: 10px">
-            <input type="file" id="fileInput" accept=".xlsx,.xls" />
+          <div class="form__field">
+            <label class="file-label">
+              <input
+                type="file"
+                id="fileInput"
+                class="file-input"
+                accept=".xlsx,.xls"
+              />
+              <span class="file-label__text">Выбрать файл Excel</span>
+            </label>
           </div>
-          <button type="button" id="calculateButton">Рассчитать</button>
-          <div id="output">
-            <button type="button" id="downloadButton">
+          <div id="status1" class="status" aria-live="polite"></div>
+          <div class="form__actions">
+            <button type="button" id="calculateButton" class="btn btn--primary">
+              Рассчитать
+            </button>
+            <button
+              type="button"
+              id="downloadButton"
+              class="btn btn--secondary"
+            >
               Скачать файл с новыми ценами
             </button>
           </div>
         </form>
-      </div>
-      <div style="display: flex; justify-content: center; align-items: center">
-        <form
-          id="form2"
-          style="display: flex; flex-direction: column; gap: 10px"
-        >
-          <h2>Поменять количество товара</h2>
-          <div>
-            <select id="select2">
-              <option value="+">+</option>
-              <option value="-">-</option>
+      </section>
+
+      <section class="card">
+        <h2 class="card__title">Поменять количество товара</h2>
+        <form id="form2" class="form">
+          <div class="form__row">
+            <select id="select2" class="select">
+              <option value="+">+ Прибавить</option>
+              <option value="-">− Отнять</option>
             </select>
-            <input type="number" id="number2" />
+            <input
+              type="number"
+              id="number2"
+              class="input"
+              placeholder="Число"
+              step="1"
+              min="0"
+            />
           </div>
-          <div style="display: flex; flex-direction: column; gap: 10px">
-            <input type="file" id="fileInput2" accept=".xlsx,.xls" />
+          <div class="form__field">
+            <label class="file-label">
+              <input
+                type="file"
+                id="fileInput2"
+                class="file-input"
+                accept=".xlsx,.xls"
+              />
+              <span class="file-label__text">Выбрать файл Excel</span>
+            </label>
           </div>
-          <button type="button" id="calculateButton2">Рассчитать</button>
-          <div id="output">
-            <button type="button" id="downloadButton2">
-              Скачать файл с новым количеством товара
+          <div id="status2" class="status" aria-live="polite"></div>
+          <div class="form__actions">
+            <button
+              type="button"
+              id="calculateButton2"
+              class="btn btn--primary"
+            >
+              Рассчитать
+            </button>
+            <button
+              type="button"
+              id="downloadButton2"
+              class="btn btn--secondary"
+            >
+              Скачать файл с новым количеством
             </button>
           </div>
         </form>
-      </div>
-    </div>
+      </section>
+    </main>
 
     <script src="new-prices.js"></script>
   </body>

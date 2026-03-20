@@ -7,6 +7,13 @@ let processedWorkbook = null;
 let workbook2 = null;
 let processedWorkbook2 = null;
 
+function showStatus(containerId, message, type = "success") {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.textContent = message;
+  el.className = `status status--${type}`;
+}
+
 // Загрузка и парсинг при выборе файла
 document.getElementById("fileInput").addEventListener("change", e => {
   const file = e.target.files[0];
@@ -16,9 +23,9 @@ document.getElementById("fileInput").addEventListener("change", e => {
     try {
       workbook = XLSX.read(ev.target.result, { type: "array" });
       processedWorkbook = null;
-      alert("Файл загружен. Введите число и нажмите Calculate.");
+      showStatus("status1", "Файл загружен. Введите число и нажмите Рассчитать.");
     } catch (err) {
-      alert("Ошибка чтения файла: " + err.message);
+      showStatus("status1", "Ошибка чтения файла: " + err.message, "error");
     }
   };
   reader.readAsArrayBuffer(file);
@@ -27,13 +34,13 @@ document.getElementById("fileInput").addEventListener("change", e => {
 // Расчёт и обновление цен
 document.getElementById("calculateButton").addEventListener("click", () => {
   if (!workbook) {
-    alert("Сначала загрузите файл");
+    showStatus("status1", "Сначала выберите файл", "error");
     return;
   }
   const numberInput = document.getElementById("number");
   const value = parseFloat(numberInput.value);
   if (isNaN(value)) {
-    alert("Введите число в поле");
+    showStatus("status1", "Введите число в поле", "error");
     return;
   }
   const operator = document.getElementById("select").value;
@@ -44,7 +51,7 @@ document.getElementById("calculateButton").addEventListener("click", () => {
 
   const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true });
   if (aoa.length === 0) {
-    alert("Таблица пуста");
+    showStatus("status1", "Таблица пуста", "error");
     return;
   }
 
@@ -57,7 +64,7 @@ document.getElementById("calculateButton").addEventListener("click", () => {
   );
 
   if (currentPriceIdx === -1) {
-    alert(`Колонка "${CURRENCY_PRICE_COL}" не найдена`);
+    showStatus("status1", `Колонка "${CURRENCY_PRICE_COL}" не найдена`, "error");
     return;
   }
 
@@ -100,14 +107,14 @@ document.getElementById("calculateButton").addEventListener("click", () => {
   }
 
   processedWorkbook = workbook;
-  alert("Расчёт выполнен. Нажмите Download для скачивания.");
+  showStatus("status1", "Расчёт выполнен. Можно скачать файл.");
 });
 
 // Скачивание обработанного файла
 document.getElementById("downloadButton").addEventListener("click", () => {
   const wb = processedWorkbook || workbook;
   if (!wb) {
-    alert("Сначала загрузите файл и выполните расчёт");
+    showStatus("status1", "Сначала загрузите файл и выполните расчёт", "error");
     return;
   }
   const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
@@ -120,6 +127,7 @@ document.getElementById("downloadButton").addEventListener("click", () => {
   a.download = "prices_updated.xlsx";
   a.click();
   URL.revokeObjectURL(url);
+  showStatus("status1", "Файл скачан");
 });
 
 // === Форма изменения количества ===
@@ -131,9 +139,9 @@ document.getElementById("fileInput2").addEventListener("change", e => {
     try {
       workbook2 = XLSX.read(ev.target.result, { type: "array" });
       processedWorkbook2 = null;
-      alert("Файл загружен. Введите число и нажмите Рассчитать.");
+      showStatus("status2", "Файл загружен. Введите число и нажмите Рассчитать.");
     } catch (err) {
-      alert("Ошибка чтения файла: " + err.message);
+      showStatus("status2", "Ошибка чтения файла: " + err.message, "error");
     }
   };
   reader.readAsArrayBuffer(file);
@@ -141,13 +149,13 @@ document.getElementById("fileInput2").addEventListener("change", e => {
 
 document.getElementById("calculateButton2").addEventListener("click", () => {
   if (!workbook2) {
-    alert("Сначала загрузите файл");
+    showStatus("status2", "Сначала выберите файл", "error");
     return;
   }
   const numberInput = document.getElementById("number2");
   const value = parseInt(numberInput.value, 10);
   if (isNaN(value)) {
-    alert("Введите число в поле");
+    showStatus("status2", "Введите число в поле", "error");
     return;
   }
   const operator = document.getElementById("select2").value;
@@ -158,7 +166,7 @@ document.getElementById("calculateButton2").addEventListener("click", () => {
 
   const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true });
   if (aoa.length === 0) {
-    alert("Таблица пуста");
+    showStatus("status2", "Таблица пуста", "error");
     return;
   }
 
@@ -168,7 +176,7 @@ document.getElementById("calculateButton2").addEventListener("click", () => {
   );
 
   if (quantityIdx === -1) {
-    alert(`Колонка "${QUANTITY_COL}" не найдена`);
+    showStatus("status2", `Колонка "${QUANTITY_COL}" не найдена`, "error");
     return;
   }
 
@@ -199,13 +207,13 @@ document.getElementById("calculateButton2").addEventListener("click", () => {
   }
 
   processedWorkbook2 = workbook2;
-  alert("Расчёт выполнен. Нажмите кнопку для скачивания.");
+  showStatus("status2", "Расчёт выполнен. Можно скачать файл.");
 });
 
 document.getElementById("downloadButton2").addEventListener("click", () => {
   const wb = processedWorkbook2 || workbook2;
   if (!wb) {
-    alert("Сначала загрузите файл и выполните расчёт");
+    showStatus("status2", "Сначала загрузите файл и выполните расчёт", "error");
     return;
   }
   const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
@@ -218,4 +226,5 @@ document.getElementById("downloadButton2").addEventListener("click", () => {
   a.download = "quantity_updated.xlsx";
   a.click();
   URL.revokeObjectURL(url);
+  showStatus("status2", "Файл скачан");
 });
